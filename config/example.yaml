@@ -1,0 +1,91 @@
+env: local
+http:
+  addr: 0.0.0.0:7070
+security:
+  apiSign:
+    appKey: 123456
+    appSecurity: 123456
+  jwt:
+    key: 1234
+
+log:
+  logLevel: debug
+  encoding: console # json or console
+#  logFileName: "./storage/logs/server.log"
+#  maxBackups: 30 # 日志文件最多保存多少个备份
+#  maxAge: 7 #  文件最多保存多少天
+#  maxSize: 1024 #  每个日志文件保存的最大尺寸 单位：M
+#  compress: true # 是否压缩
+
+apps:
+  # Apns官方文档，以获取APNs集成所需的配置参数或者其他说明。
+  # https://developer.apple.com/documentation/usernotifications/setting-up-a-remote-notification-server
+  - enabled: false
+    platform: ios
+    appName: cossim
+    appConfig:
+      # 应用程序的 Bundle ID
+      # ios capacitor.config 文件中的 appId 例如 com.hitosea.test1
+      appId: ios-appId-1
+      bundleId: ios-bundleId-1
+      keyId: ios-keyId-1
+      teamId: ios-teamId-1
+      privateKey: ios-privateKey-1
+      environment: ios-environment-1
+  # FCM官方文档，以获取FCM集成所需的配置参数或者其他说明。
+  # https://firebase.google.com/docs/admin/setup?hl=zh&authuser=0&_gl=1*71lbme*_ga*MjA2NzIzODYzMy4xNzA5NzE5OTQy*_ga_CW55HF8NVT*MTcxMDg0MDM4OC4yLjEuMTcxMDg0MDYwMC40Ny4wLjA.
+  - enabled: false
+    platform: android
+    appName: cossim
+    appConfig:
+      appId: android-appId-1
+      keyPath: android-keyPath-1
+  # https://developer.huawei.com/consumer/cn/doc/HMSCore-References/overal-description-support-0000001064490273
+  - enabled: true
+    platform: huawei
+    appName: cossim
+    appConfig:
+      appId: huawei-appid-1
+      appSecret: huawei-appSecret-1
+  # https://dev.vivo.com.cn/documentCenter/doc/541
+  - enabled: false
+    platform: vivo
+    appName: cossim
+    appConfig:
+      appId: vivo-appid-1
+      appKey: vivo-appKey-1
+      appSecret: vivo-appSecret-1
+  # https://open.oppomobile.com/new/developmentDoc/info?id=10195
+  - enabled: true
+    platform: oppo
+    appName: cossim
+    appConfig:
+      appId: oppo-appid-1
+      appKey: oppo-appKey-1
+      # 这里的secret是oppo的masterSecret
+      appSecret: oppo-appKey-1
+  - enabled: true
+    platform: xiaomi
+    appName: cossim
+    appConfig:
+      appId: xiaomi-appid-1
+      appSecret: xiaomi-appSecret-1
+      # 小米推送需要提供包名，支持多包名，逗号分隔
+      package: xiaomi-package-1,xiaomi-package-2
+  # https://github.com/MEIZUPUSH/PushAPI/blob/master/README.md
+  - enabled: true
+    platform: meizu
+    appName: cossim
+    appConfig:
+      appId: meizu-appid-1
+      appKey: meizu-appKey-1
+      package: meizu-package-1
+  # https://developer.hihonor.com/cn/kitdoc?category=%E5%9F%BA%E7%A1%80%E6%9C%8D%E5%8A%A1&kitId=11002&navigation=guides&docId=kit-history.md&token=
+  - enabled: true
+    platform: honor
+    appName: cossim
+    appConfig:
+      appId: honor-appid-1
+      appKey: honor-appKey-1
+      clientId: honor-clientId-1
+      clientSecret: honor-clientSecret-1

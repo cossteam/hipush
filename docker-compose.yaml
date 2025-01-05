@@ -2,15 +2,13 @@ version: '3.9'
 services:
   hipush:
     container_name: hipush
-    platform: linux/amd64
-    image: hub.hitosea.com/cossim/hipush
+    image: hipush.com/library/hipush
     volumes:
-      - ./config/config.yaml:/config/config.yaml
+      - ./config/local.yaml:/local.yaml
       # If iOS push is enabled, mount the push certificate into the container, consistent with the iso key_path
-      - /Users/lms/Downloads/AuthKey_UU2D9Z4ANF.p8:/config/key/AuthKey_xxx.p8
+#      - /xxx.p8:/config/key/AuthKey_xxx.p8
       # If Android push is enabled, mount the AccountKey.json into the container, consistent with the android key_path
-      - /Users/lms/Downloads/cossim-5a21a-firebase-adminsdk-atk43-5a6cdebc4e.json:/config/key/AccountKey.json
-    command: -config /config/config.yaml
+#      - /xxx-adminsdk-atk43-5a6cdebc4e.json:/config/key/AccountKey.json
+    command: -config /local.yaml
     ports:
-      - "8080:7070"
-      - "8081:7071"
+      - "7070:7070"

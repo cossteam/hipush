@@ -1,30 +1,37 @@
-# 基础镜像
-FROM golang:1.20-alpine3.18 as builder
+FROM golang:1.23.2-alpine AS builder
 
-# 设置工作目录
-WORKDIR /app
+ARG TARGETARCH
+ARG TARGETOS
 
-# 将本地文件复制到容器中
-COPY . .
+ARG GOGCFLAGS
+ARG GOLDFLAGS
+ARG GOFLAGS
 
-ARG VERSION_PATH
 ARG BUILD_BRANCH
 ARG BUILD_COMMIT
 ARG BUILD_TIME
-ARG BUILD_GO_VERSION
-ARG BUILD_PATH
-ARG MAIN_FILE
 
-ENV GOPROXY=https://goproxy.cn
-ENV GO111MODULE=on
+ENV BUILD_BRANCH=${BUILD_BRANCH}
+ENV BUILD_COMMIT=${BUILD_COMMIT}
+ENV BUILD_TIME=${BUILD_TIME}
+ENV BUILD_GO_VERSION=1.23.2
 
-RUN echo "VERSION_PATH=${VERSION_PATH}" \
-    && echo "BUILD_PATH=${BUILD_PATH}" \
-    && echo "MAIN_FILE=${MAIN_FILE}"
+RUN echo "Branch: ${BUILD_BRANCH}, Commit: ${BUILD_COMMIT}, Build Time: ${BUILD_TIME}, Go version: ${BUILD_GO_VERSION}"
+
+WORKDIR /app
+
+COPY go.mod go.sum ./
 
 RUN go mod tidy
-RUN go build -ldflags "-s -w" -ldflags "-X '${VERSION_PATH}.GitBranch=${BUILD_BRANCH}' -X '${VERSION_PATH}.GitCommit=${BUILD_COMMIT}' -X '${VERSION_PATH}.BuildTime=${BUILD_TIME}' -X '${VERSION_PATH}.GoVersion=${BUILD_GO_VERSION}'" -o /tmp/main cmd/main.go
 
-FROM alpine
-COPY --from=builder /tmp/main .
-ENTRYPOINT ["/main"]
+COPY . .
+
+RUN GOOS=${TARGETOS} GOARCH=${TARGETARCH} CGO_ENABLED=0 go build -gcflags "${GOGCFLAGS}" -ldflags "${GOLDFLAGS}" -a -o hipush ${GOFLAGS} ./cmd/hipush;
+
+FROM alpine:3.18
+
+WORKDIR /app
+
+COPY --from=builder /app/hipush .
+
+ENTRYPOINT ["./hipush"]

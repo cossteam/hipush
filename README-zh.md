@@ -1,23 +1,22 @@
-English | [简体中文](README-zh.md)
+[English](README.md) | 简体中文
 
 # Hipush
 
-Hipush is a push server that integrates push notifications for multiple mobile platforms and supports HTTP and GRPC interfaces.
+Hipush是一个推送服务器，集成多个移动平台的推送通知，它支持HTTP和GRPC接口。
 
 ## Configuration
 
-See the default [YAML config example](example.yaml):
-
+请参阅默认 [YAML config example](example.yaml):
 
 ## Deploy
 
-Running the Project Directly
+直接运行项目
 
 ```bash
 go run cmd/main.go -config xxx.yaml
 ```
 
-Running the Project Using Docker
+使用Docker运行项目
 
 ```bash
 docker run -d --name hipush \
@@ -28,7 +27,7 @@ hub.hitosea.com/cossim/hipush \
 -config /config/config.yaml
 ```
 
-Running the Project Using Docker Compose [docker-compose.yaml](docker-compose.yaml)
+使用Docker Compose运行项目 [docker-compose.yaml](docker-compose.yaml)
 
 ```bash
 docker-compose up -d
@@ -36,7 +35,7 @@ docker-compose up -d
 
 ## Usage
 
-More examples in [example](example)
+更多示例在 [example](example)
 
 ### HTTP
 

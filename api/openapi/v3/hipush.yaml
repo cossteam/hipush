@@ -1,0 +1,182 @@
+openapi: 3.0.0
+info:
+  title: Hipush API
+  description: Hipush 是一款推送消息平台，通过该接口向特定设备发送消息。
+  version: 1.0.0
+servers:
+  - url: https://api.hipush.com/v1
+    description: Hipush API 服务器
+paths:
+  /:
+    get:
+      operationId: helloHipush
+      responses:
+        "200":
+          description: 返回 Hello Hipush 的 HTML 页面
+          content:
+            text/html:
+              schema:
+                type: string
+                example: "<html><body><h1>Hello Hipush</h1></body></html>"
+  /api/v1/platforms/{platform}/apps/{appName}/devices/{token}/message:
+    post:
+      summary: 向指定设备发送推送消息
+      description: 该接口通过平台、应用名称和设备 token 向指定设备发送消息。
+      operationId: pushMessage
+      parameters:
+        - name: platform
+          in: path
+          required: true
+          description: 推送平台，例如 "ios" 或 "android"。
+          schema:
+            type: string
+            example: "ios"
+        - name: appName
+          in: path
+          required: true
+          description: 应用名称，指定推送消息的应用。
+          schema:
+            type: string
+            example: "myApp"
+        - name: token
+          in: path
+          required: true
+          description: 设备的唯一标识符（token），用于识别接收消息的设备。
+          schema:
+            type: string
+            example: "abc123xyz"
+        - name: dryRun
+          in: query
+          required: false
+          description: 是否为 DryRun 模式，如果为 `true`，仅校验配置和构建通知信息不会进行实际推送。
+          schema:
+            type: boolean
+            example: false
+        - name: retry
+          in: query
+          required: false
+          description: 最大重试次数，如果推送失败，将根据该次数进行重试。默认为 0 表示不重试。
+          schema:
+            type: integer
+            example: 3
+        - name: retryInterval
+          in: query
+          required: false
+          description: 每次重试之间的时间间隔（单位：秒），仅在 `retry` 大于 0 时有效。
+          schema:
+            type: integer
+            example: 5
+      requestBody:
+        required: true
+        description: 要发送的消息内容及其相关数据。
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/MessageRequest"
+      responses:
+        "200":
+          description: 消息发送成功
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Response"
+security:
+  # - apiKey: []
+components:
+  securitySchemes:
+    apiKey:
+      type: apiKey
+      in: header
+      name: Authorization
+  schemas:
+    MessageRequest:
+      type: object
+      properties:
+        title:
+          type: string
+          description: 消息标题。
+          example: "新消息通知"
+        content:
+          type: string
+          description: 消息的主体内容。
+          example: "您有新的消息，请查收。"
+        priority:
+          type: string
+          enum: [high, normal, low]
+          description: 消息的优先级。
+          example: "high"
+        category:
+          type: string
+          description: 消息的类别，用于分类和识别消息类型。
+          example: "IM"
+        notifyType:
+          type: integer
+          description: 通知的类型，比如“消息通知”，“系统通知”等。
+          example: "message"
+        icon:
+          type: string
+          description: 消息的图标，可以是图标的 URL 或者资源 ID。
+          example: "https://www.example.com/icon.png"
+        sound:
+          type: string
+          description: 消息的提示音。
+          example: "default"
+        TTL:
+          type: integer
+          description: 消息的存活时间（以秒为单位）。
+          example: 3600
+        foreground:
+          type: boolean
+          description: 指定消息是否在应用处于前台时显示。
+          example: true
+        clickAction:
+          $ref: '#/components/schemas/ClickAction'
+        data:
+          type: object
+          description: 附加数据，可以包含额外的信息或操作。
+          example:
+            key1: "value1"
+            key2: "value2"
+    ClickAction:
+      type: object
+      description: 点击动作，用于指定消息的点击行为。
+      properties:
+        Action:
+          type: string
+          description: 点击动作类型。
+          enum: [openApp, openActivity, openUrl]
+          x-go-type-skip-optional-pointer: true
+        Activity:
+          type: string
+          description: 指定打开的 Activity 类名。
+          example: "com.example.ActivityName"
+          x-go-type-skip-optional-pointer: true
+        URL:
+          type: string
+          description: 指定打开的 URL 地址。
+          example: "https://www.example.com"
+          x-go-type-skip-optional-pointer: true
+        Parameters:
+          type: object
+          description: 附加参数，可以传递自定义数据。
+          example:
+            key1: "value1"
+          x-go-type-skip-optional-pointer: true
+    Response:
+      type: object
+      properties:
+        code:
+          type: integer
+          description: 响应状态码。
+          example: 200
+          x-go-type-skip-optional-pointer: true
+        message:
+          type: string
+          description: 响应消息，提供状态说明。
+          example: "成功"
+          x-go-type-skip-optional-pointer: true
+        data:
+          type: object
+          description: 响应的具体数据，可能为空或包含详细信息。
+          example: {}
+          x-go-type-skip-optional-pointer: true
